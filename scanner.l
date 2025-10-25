@@ -1,61 +1,73 @@
 %{
-#include "parser.tab.h"   // Tokens generados por Bison
+#include "parser.tab.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 %}
 
-/* Se definen los patrones o expresiones regulares */
-DIGITO          [0-9]
-LETRA           [a-zA-Z]
-IDENT           {LETRA}({LETRA}|{DIGITO}|_)*
-ENTERO          {DIGITO}+
-DECIMAL         {DIGITO}+"."{DIGITO}+ /* Permite el float */
-CADENA          \"([^\"\n]|\\\")*\"
-ESPACIOS        [ \t\r\n]+
-COMENTARIO      \/\/.*              /* Permite los comentarios con "//" */
+
+DIGITO    [0-9]
+LETRA     [a-zA-Z]
+IDENT     {LETRA}({LETRA}|{DIGITO}|_)*
+ENTERO    {DIGITO}+
+DECIMAL   {DIGITO}+"."{DIGITO}+
+CADENA    \"([^\"\n]|\\\")*\"
+ESPACIOS  [ \t\r\n]+
+COMENTARIO "//".*
 
 %%
 
-/* Palabras reservadas pedidas en la consigna */ 
-"utn"           { return UTN; }
-"finutn"        { return FINUTN; }
-"leer"          { return LEER; }
-"escribir"      { return ESCRIBIR; }
-"repetir"       { return REPETIR; }
-"veces"         { return VECES; }
-"si"            { return SI; }
-"entonces"      { return ENTONCES; }
-"finsi"         { return FINSI; }
 
-/* Define tipos de datos basicos */
-"int"           { return INT; }
-"string"        { return STRING; }
-"float"         { return FLOAT; }
+"utn"       { return UTN; }
+"finutn"    { return FINUTN; }
+"leer"      { return LEER; }
+"escribir"  { return ESCRIBIR; }
+"repetir"   { return REPETIR; }
+"veces"     { return VECES; }
+"si"        { return SI; }
+"entonces"  { return ENTONCES; }
+"finsi"     { return FINSI; }
 
-/* Operadores aritmeticos y logicos */
-":="            { return ASIGN; }
-">"             { return MAYOR; }
-"<"             { return MENOR; }
-"="             { return IGUAL; }
-"+"             { return SUMA; }
-"-"             { return RESTA; }
-"*"             { return MULT; }
-"("             { return PARI; }
-")"             { return PARD; }
-","             { return COMA; }
 
-"."             { return PUNTO; } /* Simbolo para terminar las sentencias */
+"int"       { return INT; }
+"string"    { return STRING; }
+"float"     { return FLOAT; }
 
-/* Define las reglas */
-{DECIMAL}       { yylval.fval = atof(yytext); return NUM_FLOAT; }
-{ENTERO}        { yylval.ival = atoi(yytext); return NUM_INT; }
-{CADENA}        { yylval.sval = strdup(yytext); return CADENA_TXT; }
-{IDENT}         { yylval.sval = strdup(yytext); return ID; }
 
-{COMENTARIO}    { /* Ignorar línea */ } 
-{ESPACIOS}      { /* Ignorar */ } 
+":="        { return ASIGN; }
+">"         { return MAYOR; }
+"<"         { return MENOR; }
+"="         { return IGUAL; }
+"+"         { return SUMA; }
+"-"         { return RESTA; }
+"*"         { return MULT; }
+"("         { return PARI; }
+")"         { return PARD; }
+","         { return COMA; }
+"."         { return PUNTO; }
 
-.               { printf("Error léxico: símbolo '%s' no reconocido.\n", yytext); }
+
+{ENTERO}    { yylval.ival = atoi(yytext); return NUM_INT; }
+{DECIMAL}   { yylval.fval = atof(yytext); return NUM_FLOAT; }
+{CADENA}    { 
+    /* Remover comillas y procesar escapes */
+    char *text = yytext;
+    int len = strlen(text);
+    char *str = (char *)malloc(len - 1);
+    strncpy(str, text + 1, len - 2);
+    str[len - 2] = '\0';
+    yylval.sval = str;
+    return CADENA_TXT; 
+}
+{IDENT}     { yylval.sval = strdup(yytext); return ID; }
+
+{COMENTARIO}  { /* ignorar */ }
+{ESPACIOS}    { /* ignorar */ }
+
+.           { printf("Error lexico: simbolo '%s' no reconocido\n", yytext); }
 
 %%
 
-int yywrap() { return 1; }
+int yywrap() {
+    return 1;
+}
