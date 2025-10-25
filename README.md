@@ -11,7 +11,8 @@ Archivo que define los tokens y expresiones regulares del lenguaje, cosas como
 palabras reservadas pedidas en las consignas, tipos de archivos 
 y los operadores aritmetico-logicos.
 
-´´´lexer
+```lexer
+
 %{
     /* Código C inicial */
 %}
@@ -26,7 +27,7 @@ y los operadores aritmetico-logicos.
 
 /* Código C adicional (opcional) */
 
-´´´
+```
 
 
 ### Estructura de parser.y:
@@ -35,7 +36,8 @@ Este archivo compone el analizador sintactico, lee los tokens y arma las reglas 
 que el lenguaje va a seguir a la hora de ejecutarse, por ejemplo, que el contenido fuente 
 del archivo .miutn, este entre las palabras claves "UTN" "FINUTN".
 
-´´´parser
+```parser
+
 %{
     /* Código C inicial (sección de declaraciones)
        - Inclusión de librerías estándar
@@ -65,7 +67,7 @@ del archivo .miutn, este entre las palabras claves "UTN" "FINUTN".
    - Función yyerror() para manejar errores sintácticos
    - Función main() o integración con otro archivo .c
 */
-´´´
+```
 
 
 ### MiUtn.c
@@ -73,7 +75,9 @@ del archivo .miutn, este entre las palabras claves "UTN" "FINUTN".
 Este archivo permite al lenguaje ser mas flexible, inicializa lexer y el analizador
 sintactico (bison) y lee el contenido de un archivo .miutn.
 
-´´´c
+```c
+
+
 /* Inclusión de librerías estándar
    - Librerías necesarias para manejo de archivos, entrada/salida y sistema.
 */
@@ -101,4 +105,4 @@ int main(int argc, char *argv[]) {
    - Pueden incluir impresión de mensajes, manejo de errores o modos de depuración.
 */
 
-´´´
+```
