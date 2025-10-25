@@ -28,7 +28,11 @@ y los operadores aritmetico-logicos.
 /* Código C adicional (opcional) */
 
 ```
+Los comentarios en lexer son problemicos a la hora de pasarlos por win_lexer o lexer en si
+a continuacion se muestran algunas cosas importantes del archivo:
 
+""."         { return PUNTO; }" Define el caracter con los que se terminan las sentencias
+"DECIMAL   {DIGITO}+"."{DIGITO}+" Permite el valor tipo float
 
 ### Estructura de parser.y:
 
