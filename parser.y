@@ -1,61 +1,99 @@
 %{
-#include "parser.tab.h"   // Tokens generados por Bison
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/* Variables externas del lexer */
+extern int yylex();
+extern int yylineno;
+extern char *yytext;
+
+/* Función para manejar errores sintácticos */
+void yyerror(const char *s);
 %}
 
-/* Se definen los patrones o expresiones regulares */
-DIGITO          [0-9]
-LETRA           [a-zA-Z]
-IDENT           {LETRA}({LETRA}|{DIGITO}|_)*
-ENTERO          {DIGITO}+
-DECIMAL         {DIGITO}+"."{DIGITO}+ /* Permite el float */
-CADENA          \"([^\"\n]|\\\")*\"
-ESPACIOS        [ \t\r\n]+
-COMENTARIO      \/\/.*              /* Permite los comentarios con "//" */
+/* -------------------------------
+   Declaración de tokens (de Flex)
+   ------------------------------- */
+%token UTN FINUTN LEER ESCRIBIR REPETIR VECES SI ENTONCES FINSI
+%token INT STRING FLOAT
+%token ASIGN MAYOR MENOR IGUAL SUMA RESTA MULT PARI PARD COMA PUNTO
+%token NUM_INT NUM_FLOAT CADENA_TXT ID
+
+/* -------------------------------
+   Definición de tipos y precedencias
+   ------------------------------- */
+
+/* Precedencia de operadores aritméticos */
+%left SUMA RESTA
+%left MULT
+
+/* Tipos de valores (entero, float, string) */
+%union {
+    int  ival;
+    float fval;
+    char *sval;
+}
+
+/* Asociamos los tokens con los tipos del %union */
+%type <ival> NUM_INT
+%type <fval> NUM_FLOAT
+%type <sval> ID CADENA_TXT
 
 %%
 
-// Palabras reservadas pedidas en la consigna
-"utn"           { return UTN; }
-"finutn"        { return FINUTN; }
-"leer"          { return LEER; }
-"escribir"      { return ESCRIBIR; }
-"repetir"       { return REPETIR; }
-"veces"         { return VECES; }
-"si"            { return SI; }
-"entonces"      { return ENTONCES; }
-"finsi"         { return FINSI; }
+/* -------------------------------
+   REGLAS GRAMATICALES PRINCIPALES
+   ------------------------------- */
 
-// Define tipos de datos basicos 
-"int"           { return INT; }
-"string"        { return STRING; }
-"float"         { return FLOAT; }
+programa:
+      UTN lista_sentencias FINUTN
+    ;
 
-// Operadores aritmeticos y logicos
-":="            { return ASIGN; }
-">"             { return MAYOR; }
-"<"             { return MENOR; }
-"="             { return IGUAL; }
-"+"             { return SUMA; }
-"-"             { return RESTA; }
-"*"             { return MULT; }
-"("             { return PARI; }
-")"             { return PARD; }
-","             { return COMA; }
+lista_sentencias:
+      lista_sentencias sentencia
+    | sentencia
+    ;
 
-"."             { return PUNTO; } // Simbolo para terminar las sentencias
+sentencia:
+      LEER PARI ID PARD PUNTO
+    | ESCRIBIR PARI expresion PARD PUNTO
+    | ID ASIGN expresion PUNTO
+    | SI PARI expresion PARD ENTONCES lista_sentencias FINSI PUNTO
+    | REPETIR NUM_INT VECES PUNTO
+    | INT ID ASIGN expresion PUNTO
+    | STRING ID ASIGN CADENA_TXT PUNTO
+    | FLOAT ID ASIGN expresion PUNTO
+    ;
 
-// Define las reglas 
-{DECIMAL}       { yylval.fval = atof(yytext); return NUM_FLOAT; }
-{ENTERO}        { yylval.ival = atoi(yytext); return NUM_INT; }
-{CADENA}        { yylval.sval = strdup(yytext); return CADENA_TXT; }
-{IDENT}         { yylval.sval = strdup(yytext); return ID; }
-
-{COMENTARIO}    { /* Ignorar línea */ } 
-{ESPACIOS}      { /* Ignorar */ } 
-
-.               { printf("Error léxico: símbolo '%s' no reconocido.\n", yytext); }
+expresion:
+      expresion SUMA expresion
+    | expresion RESTA expresion
+    | expresion MULT expresion
+    | PARI expresion PARD
+    | ID
+    | NUM_INT
+    | NUM_FLOAT
+    | CADENA_TXT
+    ;
 
 %%
 
-int yywrap() { return 1; }
+/* -------------------------------
+   CÓDIGO C AUXILIAR
+   ------------------------------- */
+
+void yyerror(const char *s) {
+    fprintf(stderr, "Error sintáctico en línea %d: %s (token: '%s')\n", yylineno, s, yytext);
+}
+
+int main(int argc, char *argv[]) {
+    printf("Iniciando analizador MiUtn...\n");
+
+    if (yyparse() == 0)
+        printf("Análisis completado correctamente.\n");
+    else
+        printf("Se encontraron errores durante el análisis.\n");
+
+    return 0;
+}

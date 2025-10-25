@@ -2,7 +2,7 @@ Si apruebo paradigmas sigo a la sharon vico
 
 ## Lenguaje de programacion miutn
 
-Estructura de scanner.l:
+### Estructura de scanner.l:
 
 "
 %{
@@ -21,4 +21,4 @@ Estructura de scanner.l:
 
 "
 
-Antes del primer "%%" los comentarios deben ir con esta estructura "/* Permite los comentarios con "//" */"
+Los comentarios usan la siguiente estructura /* comentario */
