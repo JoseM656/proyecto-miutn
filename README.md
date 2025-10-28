@@ -8,6 +8,8 @@ Los comentarios usan en codigo usan la siguiente estructura /* comentario */
 Estructura basica:
 
 ´´´ASCII
+
+
 PROYECTO_FINAL2/
 │
 ├── src/
@@ -23,7 +25,6 @@ PROYECTO_FINAL2/
 ├── programa_minimo.miutn  → Ejemplo básico del lenguaje
 │
 └── README.md              → Documentación del proyecto
-
 ´´´
 
 ### Estructura de scanner.l:
@@ -50,9 +51,9 @@ operadores aritmetico-logicos y comentarios.
 ```
 **Importante sobre lexer**
 
-- ´"." { return PUNTO; }´ obligatorio al finalizar cada setencia.
+- ´´"." { return PUNTO; }´´ obligatorio al finalizar cada setencia.
 
-- ´DECIMAL {DIGITO}+"."{DIGITO}+´ Permite reconocer valores de tipo float (ej: 3.14).
+- ´´DECIMAL {DIGITO}+"."{DIGITO}+´´ Permite reconocer valores de tipo float (ej: 3.14).
 
 - Se definen los comentarios usando "//".
 
