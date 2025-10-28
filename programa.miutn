@@ -1,0 +1,24 @@
+// Programa de prueba básico para MiUtn
+
+utn
+    // Declaración de variables
+    int a := 5.
+    int b := 10.
+    float c := 2.5.
+    string mensaje := "El resultado es:".
+
+    // Escritura simple
+    escribir(mensaje).
+    escribir(a + b).
+    escribir(b - a).
+    escribir(a * c).
+
+    // Estructura condicional simple (si lo implementaste en el parser)
+    si a < b entonces
+        escribir("A es menor que B").
+    finsi
+
+    // Repetición simple (si la implementaste)
+    repetir 3 veces
+        escribir("Iteración").
+    finutn
