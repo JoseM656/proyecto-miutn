@@ -1,0 +1,4 @@
+utn
+    leer(x).
+    escribir(x + 10).
+finutn

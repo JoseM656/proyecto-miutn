@@ -26,9 +26,9 @@ int main(int argc, char *argv[]) {
 
     printf("-----------------------------------\n");
     if (resultado == 0)
-        printf("Análisis completado correctamente.\n");
+        printf("Analisis completado correctamente.\n");
     else
-        printf("Se encontraron errores durante el análisis.\n");
+        printf("Se encontraron errores durante el analisis.\n");
 
     fclose(yyin);
     return 0;
