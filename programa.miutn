@@ -13,12 +13,9 @@ utn
     escribir(b - a).
     escribir(a * c).
 
-    // Estructura condicional simple (si lo implementaste en el parser)
+    // Estructura condicional simple
     si a < b entonces
         escribir("A es menor que B").
     finsi
 
-    // Repetición simple (si la implementaste)
-    repetir 3 veces
-        escribir("Iteración").
 finutn

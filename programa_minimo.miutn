@@ -1,4 +1,12 @@
 utn
-    leer(x).
-    escribir(x + 10).
+    int x := 4.
+    float y := 3.7.
+    string saludo := "Hola Mundo".
+
+    escribir(x).
+    escribir(y).
+    escribir(saludo).
+
+    leer(z).
+    escribir(z + y).
 finutn

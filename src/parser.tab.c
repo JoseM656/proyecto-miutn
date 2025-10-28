@@ -73,26 +73,38 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* -------------------------------------------
+   Declaraciones globales y estructuras base
+   ------------------------------------------- */
 extern int yylex();
 extern int yylineno;
 extern char *yytext;
 
 void yyerror(const char *s);
 
-/* Estructura de variable  */
+/* Tipos de datos soportados por el lenguaje */
+typedef enum { TIPO_INT, TIPO_FLOAT, TIPO_STRING } TipoDato;
+
+/* Estructura para cada variable */
 typedef struct {
     char nombre[50];
-    int valor;
+    TipoDato tipo;
+    union {
+        int ival;
+        float fval;
+        char sval[100];
+    } valor;
 } Variable;
 
+/* Tabla de variables (memoria simulada) */
 Variable tabla[100];
 int num_vars = 0;
 
-/* Funciones auxiliares */
-void asignar_variable(const char *nombre, int valor);
-int obtener_variable(const char *nombre);
+/* Declaraciones de funciones auxiliares */
+void asignar_variable(const char *nombre, TipoDato tipo, void *valor);
+Variable *obtener_variable(const char *nombre);
 
-#line 96 "parser.tab.c"
+#line 108 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -482,16 +494,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  11
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   70
+#define YYLAST   71
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  30
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  5
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  18
+#define YYNRULES  19
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  52
+#define YYNSTATES  55
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   284
@@ -541,10 +553,10 @@ static const yytype_int8 yytranslate[] =
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_int8 yyrline[] =
+static const yytype_uint8 yyrline[] =
 {
-       0,    48,    48,    52,    53,    57,    58,    59,    66,    67,
-      68,    69,    73,    74,    75,    76,    77,    78,    79
+       0,    73,    73,    77,    78,    83,    84,    85,    99,   115,
+     116,   117,   120,   128,   129,   130,   131,   132,   133,   134
 };
 #endif
 
@@ -589,12 +601,12 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-       0,    -1,     6,   -15,    -6,   -12,    -2,     7,    14,    -4,
-     -16,   -16,    16,    -7,    31,    44,    46,     8,   -16,   -16,
-      39,     8,   -16,   -16,    40,   -16,    32,     8,    -5,     8,
-      19,    41,    37,    42,     8,     8,     8,    43,    22,    45,
-      29,   -16,   -16,   -16,   -16,    48,    48,   -16,   -16,   -16,
-     -16,   -16
+       0,    -1,     6,   -15,    -6,   -12,    -2,     1,     8,    -4,
+     -16,   -16,     2,    -7,    14,    23,    32,    10,   -16,   -16,
+      25,    10,   -16,   -16,    38,    40,    34,    10,    36,    10,
+     -16,    21,    41,    39,    42,    43,    10,    10,    10,    44,
+      24,    45,    31,   -16,   -16,   -16,   -16,   -16,    50,    50,
+     -16,   -16,   -16,   -16,   -16
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -604,16 +616,16 @@ static const yytype_int8 yydefact[] =
 {
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        4,     1,     0,     0,     0,     0,     0,     0,     2,     3,
-       0,     0,    16,    17,     0,    18,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,    11,     7,    15,     6,    12,    13,    14,     5,     8,
-       9,    10
+       0,     0,    17,    18,     0,    19,     0,     0,     0,     0,
+      19,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,    12,     8,    16,     6,     7,    13,    14,
+      15,     5,     9,    11,    10
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -16,   -16,   -16,    55,    -3
+     -16,   -16,   -16,    56,    -3
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
@@ -628,25 +640,25 @@ static const yytype_int8 yydefgoto[] =
 static const yytype_int8 yytable[] =
 {
       18,     3,     4,     1,     3,     4,    11,    12,     5,     6,
-       7,     5,     6,     7,    30,    21,    13,    14,    32,    22,
-      23,    24,    25,    39,    38,     8,    40,    15,     8,    17,
-      21,    45,    46,    47,    22,    23,    16,    25,    34,    35,
-      36,    34,    35,    36,    41,    20,    27,    49,    34,    35,
-      36,    34,    35,    36,    51,    37,    34,    35,    36,    28,
-      43,    29,    31,    33,    19,     0,    42,    44,    48,    36,
-      50
+       7,     5,     6,     7,    31,    21,    13,    14,    33,    22,
+      23,    24,    25,    17,    40,     8,    42,    15,     8,    27,
+      16,    20,    21,    48,    49,    50,    22,    23,    28,    30,
+      36,    37,    38,    36,    37,    38,    43,    29,    32,    52,
+      36,    37,    38,    36,    37,    38,    54,    39,    36,    37,
+      38,    34,    45,    35,    41,    19,    44,    46,    47,    51,
+      53,    38
 };
 
 static const yytype_int8 yycheck[] =
 {
        4,     5,     6,     3,     5,     6,     0,    22,    12,    13,
       14,    12,    13,    14,    17,    22,    22,    29,    21,    26,
-      27,    28,    29,    28,    27,    29,    29,    29,    29,    15,
-      22,    34,    35,    36,    26,    27,    29,    29,    19,    20,
-      21,    19,    20,    21,    25,    29,    15,    25,    19,    20,
-      21,    19,    20,    21,    25,    23,    19,    20,    21,    15,
-      23,    15,    23,    23,     9,    -1,    25,    25,    25,    21,
-      25
+      27,    28,    29,    15,    27,    29,    29,    29,    29,    15,
+      29,    29,    22,    36,    37,    38,    26,    27,    15,    29,
+      19,    20,    21,    19,    20,    21,    25,    15,    23,    25,
+      19,    20,    21,    19,    20,    21,    25,    23,    19,    20,
+      21,    23,    23,    23,    28,     9,    25,    25,    25,    25,
+      25,    21
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -656,23 +668,23 @@ static const yytype_int8 yystos[] =
        0,     3,    31,     5,     6,    12,    13,    14,    29,    32,
       33,     0,    22,    22,    29,    29,    29,    15,     4,    33,
       29,    22,    26,    27,    28,    29,    34,    15,    15,    15,
-      34,    23,    34,    23,    19,    20,    21,    23,    34,    28,
-      34,    25,    25,    23,    25,    34,    34,    34,    25,    25,
-      25,    25
+      29,    34,    23,    34,    23,    23,    19,    20,    21,    23,
+      34,    28,    34,    25,    25,    23,    25,    25,    34,    34,
+      34,    25,    25,    25,    25
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
        0,    30,    31,    32,    32,    33,    33,    33,    33,    33,
-      33,    33,    34,    34,    34,    34,    34,    34,    34
+      33,    33,    33,    34,    34,    34,    34,    34,    34,    34
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     3,     2,     1,     5,     5,     5,     5,     5,
-       5,     4,     3,     3,     3,     3,     1,     1,     1
+       5,     5,     4,     3,     3,     3,     3,     1,     1,     1
 };
 
 
@@ -1136,97 +1148,133 @@ yyreduce:
   switch (yyn)
     {
   case 5: /* sentencia: ESCRIBIR PARI expresion PARD PUNTO  */
-#line 57 "parser.y"
-                                           { printf("%d\n", (yyvsp[-2].ival)); }
-#line 1142 "parser.tab.c"
+#line 83 "parser.y"
+                                           { printf("%g\n", (yyvsp[-2].fval)); }
+#line 1154 "parser.tab.c"
     break;
 
   case 6: /* sentencia: ESCRIBIR PARI CADENA_TXT PARD PUNTO  */
-#line 58 "parser.y"
+#line 84 "parser.y"
                                            { printf("%s\n", (yyvsp[-2].sval)); free((yyvsp[-2].sval)); }
-#line 1148 "parser.tab.c"
-    break;
-
-  case 7: /* sentencia: LEER PARI ID PARD PUNTO  */
-#line 59 "parser.y"
-                                           {
-                                              int valor;
-                                              printf("Ingrese valor para %s: ", (yyvsp[-2].sval));
-                                              scanf("%d", &valor);
-                                              asignar_variable((yyvsp[-2].sval), valor);
-                                              free((yyvsp[-2].sval));
-                                           }
 #line 1160 "parser.tab.c"
     break;
 
-  case 8: /* sentencia: INT ID ASIGN expresion PUNTO  */
-#line 66 "parser.y"
-                                           { asignar_variable((yyvsp[-3].sval), (yyvsp[-1].ival)); printf("(int) %s = %d\n", (yyvsp[-3].sval), (yyvsp[-1].ival)); free((yyvsp[-3].sval)); }
-#line 1166 "parser.tab.c"
+  case 7: /* sentencia: ESCRIBIR PARI ID PARD PUNTO  */
+#line 85 "parser.y"
+                                           {
+                                              Variable *v = obtener_variable((yyvsp[-2].sval));
+                                              if (!v)
+                                                  printf("Advertencia: variable '%s' no definida\n", (yyvsp[-2].sval));
+                                              else if (v->tipo == TIPO_INT)
+                                                  printf("%d\n", v->valor.ival);
+                                              else if (v->tipo == TIPO_FLOAT)
+                                                  printf("%g\n", v->valor.fval);
+                                              else
+                                                  printf("%s\n", v->valor.sval);
+                                              free((yyvsp[-2].sval));
+                                           }
+#line 1177 "parser.tab.c"
     break;
 
-  case 9: /* sentencia: STRING ID ASIGN CADENA_TXT PUNTO  */
-#line 67 "parser.y"
-                                           { printf("(string) %s = \"%s\"\n", (yyvsp[-3].sval), (yyvsp[-1].sval)); free((yyvsp[-3].sval)); free((yyvsp[-1].sval)); }
-#line 1172 "parser.tab.c"
-    break;
+  case 8: /* sentencia: LEER PARI ID PARD PUNTO  */
+#line 99 "parser.y"
+                                           {
+                                              char buffer[64];
+                                              printf("Ingrese valor para %s: ", (yyvsp[-2].sval));
+                                              scanf("%63s", buffer);
 
-  case 10: /* sentencia: FLOAT ID ASIGN expresion PUNTO  */
-#line 68 "parser.y"
-                                           { asignar_variable((yyvsp[-3].sval), (yyvsp[-1].ival)); printf("(float) %s = %d\n", (yyvsp[-3].sval), (yyvsp[-1].ival)); free((yyvsp[-3].sval)); }
-#line 1178 "parser.tab.c"
-    break;
-
-  case 11: /* sentencia: ID ASIGN expresion PUNTO  */
-#line 69 "parser.y"
-                                           { asignar_variable((yyvsp[-3].sval), (yyvsp[-1].ival)); printf("%s := %d\n", (yyvsp[-3].sval), (yyvsp[-1].ival)); free((yyvsp[-3].sval)); }
-#line 1184 "parser.tab.c"
-    break;
-
-  case 12: /* expresion: expresion SUMA expresion  */
-#line 73 "parser.y"
-                                 { (yyval.ival) = (yyvsp[-2].ival) + (yyvsp[0].ival); }
-#line 1190 "parser.tab.c"
-    break;
-
-  case 13: /* expresion: expresion RESTA expresion  */
-#line 74 "parser.y"
-                                 { (yyval.ival) = (yyvsp[-2].ival) - (yyvsp[0].ival); }
+                                              if (strchr(buffer, '.')) {
+                                                  float f = atof(buffer);
+                                                  asignar_variable((yyvsp[-2].sval), TIPO_FLOAT, &f);
+                                              } else {
+                                                  int i = atoi(buffer);
+                                                  asignar_variable((yyvsp[-2].sval), TIPO_INT, &i);
+                                              }
+                                              free((yyvsp[-2].sval));
+                                           }
 #line 1196 "parser.tab.c"
     break;
 
-  case 14: /* expresion: expresion MULT expresion  */
-#line 75 "parser.y"
-                                 { (yyval.ival) = (yyvsp[-2].ival) * (yyvsp[0].ival); }
+  case 9: /* sentencia: INT ID ASIGN expresion PUNTO  */
+#line 115 "parser.y"
+                                           { int v = (int)(yyvsp[-1].fval); asignar_variable((yyvsp[-3].sval), TIPO_INT, &v); free((yyvsp[-3].sval)); }
 #line 1202 "parser.tab.c"
     break;
 
-  case 15: /* expresion: PARI expresion PARD  */
-#line 76 "parser.y"
-                                 { (yyval.ival) = (yyvsp[-1].ival); }
+  case 10: /* sentencia: FLOAT ID ASIGN expresion PUNTO  */
+#line 116 "parser.y"
+                                           { float f = (yyvsp[-1].fval); asignar_variable((yyvsp[-3].sval), TIPO_FLOAT, &f); free((yyvsp[-3].sval)); }
 #line 1208 "parser.tab.c"
     break;
 
-  case 16: /* expresion: NUM_INT  */
-#line 77 "parser.y"
-                                 { (yyval.ival) = (yyvsp[0].ival); }
+  case 11: /* sentencia: STRING ID ASIGN CADENA_TXT PUNTO  */
+#line 117 "parser.y"
+                                           { asignar_variable((yyvsp[-3].sval), TIPO_STRING, (yyvsp[-1].sval)); free((yyvsp[-3].sval)); free((yyvsp[-1].sval)); }
 #line 1214 "parser.tab.c"
     break;
 
-  case 17: /* expresion: NUM_FLOAT  */
-#line 78 "parser.y"
-                                 { (yyval.ival) = (int)(yyvsp[0].fval); }
+  case 12: /* sentencia: ID ASIGN expresion PUNTO  */
+#line 120 "parser.y"
+                                           { float f = (yyvsp[-1].fval); asignar_variable((yyvsp[-3].sval), TIPO_FLOAT, &f); free((yyvsp[-3].sval)); }
 #line 1220 "parser.tab.c"
     break;
 
-  case 18: /* expresion: ID  */
-#line 79 "parser.y"
-                                 { (yyval.ival) = obtener_variable((yyvsp[0].sval)); free((yyvsp[0].sval)); }
+  case 13: /* expresion: expresion SUMA expresion  */
+#line 128 "parser.y"
+                                 { (yyval.fval) = (yyvsp[-2].fval) + (yyvsp[0].fval); }
 #line 1226 "parser.tab.c"
     break;
 
+  case 14: /* expresion: expresion RESTA expresion  */
+#line 129 "parser.y"
+                                 { (yyval.fval) = (yyvsp[-2].fval) - (yyvsp[0].fval); }
+#line 1232 "parser.tab.c"
+    break;
 
-#line 1230 "parser.tab.c"
+  case 15: /* expresion: expresion MULT expresion  */
+#line 130 "parser.y"
+                                 { (yyval.fval) = (yyvsp[-2].fval) * (yyvsp[0].fval); }
+#line 1238 "parser.tab.c"
+    break;
+
+  case 16: /* expresion: PARI expresion PARD  */
+#line 131 "parser.y"
+                                 { (yyval.fval) = (yyvsp[-1].fval); }
+#line 1244 "parser.tab.c"
+    break;
+
+  case 17: /* expresion: NUM_INT  */
+#line 132 "parser.y"
+                                 { (yyval.fval) = (float)(yyvsp[0].ival); }
+#line 1250 "parser.tab.c"
+    break;
+
+  case 18: /* expresion: NUM_FLOAT  */
+#line 133 "parser.y"
+                                 { (yyval.fval) = (yyvsp[0].fval); }
+#line 1256 "parser.tab.c"
+    break;
+
+  case 19: /* expresion: ID  */
+#line 134 "parser.y"
+         {
+            Variable *v = obtener_variable((yyvsp[0].sval));
+            if (!v) {
+                printf("Advertencia: variable '%s' no definida (usando 0)\n", (yyvsp[0].sval));
+                (yyval.fval) = 0.0;
+            } else if (v->tipo == TIPO_INT)
+                (yyval.fval) = (float)v->valor.ival;
+            else if (v->tipo == TIPO_FLOAT)
+                (yyval.fval) = v->valor.fval;
+            else
+                (yyval.fval) = 0.0;
+            free((yyvsp[0].sval));
+         }
+#line 1274 "parser.tab.c"
+    break;
+
+
+#line 1278 "parser.tab.c"
 
       default: break;
     }
@@ -1419,34 +1467,48 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 82 "parser.y"
+#line 149 "parser.y"
 
 
-/* -------------------------------
-   Funciones auxiliares
-   ------------------------------- */
+/* -------------------------------------------
+   FUNCIONES AUXILIARES EN C
+   ------------------------------------------- */
 
 void yyerror(const char *s) {
     fprintf(stderr, "Error sintactico en linea %d: %s (token: '%s')\n", yylineno, s, yytext);
 }
 
-void asignar_variable(const char *nombre, int valor) {
+void asignar_variable(const char *nombre, TipoDato tipo, void *valor) {
+    /* Si ya existe, se actualiza */
     for (int i = 0; i < num_vars; i++) {
         if (strcmp(tabla[i].nombre, nombre) == 0) {
-            tabla[i].valor = valor;
+            tabla[i].tipo = tipo;
+            if (tipo == TIPO_INT)
+                tabla[i].valor.ival = *(int *)valor;
+            else if (tipo == TIPO_FLOAT)
+                tabla[i].valor.fval = *(float *)valor;
+            else
+                strcpy(tabla[i].valor.sval, (char *)valor);
             return;
         }
     }
+
+    /* Si no existe, se crea */
     strcpy(tabla[num_vars].nombre, nombre);
-    tabla[num_vars].valor = valor;
+    tabla[num_vars].tipo = tipo;
+    if (tipo == TIPO_INT)
+        tabla[num_vars].valor.ival = *(int *)valor;
+    else if (tipo == TIPO_FLOAT)
+        tabla[num_vars].valor.fval = *(float *)valor;
+    else
+        strcpy(tabla[num_vars].valor.sval, (char *)valor);
     num_vars++;
 }
 
-int obtener_variable(const char *nombre) {
+Variable *obtener_variable(const char *nombre) {
     for (int i = 0; i < num_vars; i++) {
         if (strcmp(tabla[i].nombre, nombre) == 0)
-            return tabla[i].valor;
+            return &tabla[i];
     }
-    printf("Advertencia: variable '%s' no definida (usando 0)\n", nombre);
-    return 0;
+    return NULL;
 }

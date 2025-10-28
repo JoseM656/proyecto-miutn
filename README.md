@@ -1,15 +1,39 @@
 ## Lenguaje de programacion miutn
+El proyecto MiUTN consiste en un lenguaje interpretado básico, implementado con Flex (lexer) 
+y Bison (parser) y gcc,permite declarar variables, leer y escribir valores, 
+operar con expresiones aritméticas y trabajar con cadenas de texto.
 
-Los comentarios usan la siguiente estructura /* comentario */
+Los comentarios usan en codigo usan la siguiente estructura /* comentario */
+
+Estructura basica:
+
+´´´
+PROYECTO_FINAL2/
+│
+├── src/
+│   ├── scanner.l          → Analizador léxico (Flex)
+│   ├── parser.y           → Analizador sintáctico (Bison)
+│   ├── parser.tab.c       → Código C generado por Bison (desechable)
+│   ├── parser.tab.h       → Encabezado generado por Bison (desechable)
+│   ├── lex.yy.c           → Código C generado por Flex (desechable)
+│   ├── MiUtn.c            → Programa principal (ejecuta el parser)
+│   └── miutn.exe          → Ejecutable compilado
+│
+├── programa.miutn         → Programa de prueba principal
+├── programa_minimo.miutn  → Ejemplo básico del lenguaje
+│
+└── README.md              → Documentación del proyecto
+
+
+´´´
 
 ### Estructura de scanner.l:
 
-Archivo que define los tokens y expresiones regulares del lenguaje, cosas como
-palabras reservadas pedidas en las consignas, tipos de archivos 
-y los operadores aritmetico-logicos.
+Archivo que define los *tokens y expresiones regulares del lenguaje*, cosas como
+palabras reservadas pedidas en las consignas, tipos de archivos, 
+operadores aritmetico-logicos y comentarios.
 
 ```lexer
-
 %{
     /* Código C inicial */
 %}
@@ -25,60 +49,75 @@ y los operadores aritmetico-logicos.
 /* Código C adicional (opcional) */
 
 ```
-Los comentarios en lexer son problemicos a la hora de pasarlos por win_lexer o lexer en si
-a continuacion se muestran algunas cosas importantes del archivo:
+*Importante sobre lexer*
 
-""."         { return PUNTO; }" Define el caracter con los que se terminan las sentencias
-"DECIMAL   {DIGITO}+"."{DIGITO}+" Permite el valor tipo float
+- ´"." { return PUNTO; }´ obligatorio al finalizar cada setencia.
+
+- ´DECIMAL {DIGITO}+"."{DIGITO}+´ Permite reconocer valores de tipo float (ej: 3.14).
+
+- Se definen los comentarios usando "//".
 
 ### Estructura de parser.y:
 
-Este archivo compone el analizador sintactico, lee los tokens y arma las reglas gramaticales
+Este archivo compone el analizador sintactico y es una pieza clave para lograr
+que el lenguaje sea util. Lee los tokens y arma las reglas gramaticales
 que el lenguaje va a seguir a la hora de ejecutarse, por ejemplo, que el contenido fuente 
 del archivo .miutn, este entre las palabras claves "UTN" "FINUTN".
 
 Este archivo tambien define una estrcutura para usar variables, tabla de simbolos
 y la estructura para interpretar el lenguaje.
 
+También gestiona:
+
+- *Declaración de variables*
+
+- Tabla de símbolos
+
+- Tipos de datos (int, float, string)
+
+- Lectura y escritura
+
+- Operaciones aritméticas
 
 ```parser
 
 %{
-    /* Código C inicial (sección de declaraciones)
-       - Inclusión de librerías estándar
-       - Declaración de funciones externas (yylex, yyerror)
-       - Variables globales o estructuras auxiliares
+    /* Código C inicial (declaraciones)
+       - Librerías estándar
+       - Funciones externas (yylex, yyerror)
+       - Estructuras de datos y variables globales
     */
 %}
 
 /* Declaración de tokens, tipos de datos y precedencias
-   - %token: define los tokens que vienen desde Flex
-   - %union: define tipos de valores que pueden tener los tokens
-   - %left / %right: define precedencias de operadores
-   - %type: asocia reglas con tipos del %union
+   - %token: define los tokens de Flex
+   - %union: agrupa los tipos de valores (int, float, string)
+   - %left / %right: define precedencias
+   - %type: asocia tipos del %union con reglas gramaticales
 */
 
 %%
 
-/* Reglas gramaticales (producciones)
+/* Reglas gramaticales
    - Estructura principal del lenguaje
-   - Definición de sentencias, expresiones y bloques
-   - Acciones semánticas opcionales en C (entre llaves { })
+   - Definición de sentencias (leer, escribir, asignar, etc.)
+   - Expresiones aritméticas y manejo de variables
 */
 
 %%
 
-/* Código C adicional (opcional)
-   - Función yyerror() para manejar errores sintácticos
-   - Función main() o integración con otro archivo .c
+/* Código C adicional
+   - Funciones auxiliares (asignar_variable, obtener_variable)
+   - Manejador de errores sintácticos (yyerror)
 */
+
 ```
 
 
 ### MiUtn.c
 
-Este archivo permite al lenguaje ser mas flexible, inicializa lexer y el analizador
-sintactico (bison) y lee el contenido de un archivo .miutn.
+Este archivo permite al lenguaje ser mas flexible, sirve como punto de entrada 
+del programa Permite ejecutar el analizador con un archivo fuente .miutn desde línea de comandos.
 
 ```c
 
@@ -111,3 +150,19 @@ int main(int argc, char *argv[]) {
 */
 
 ```
+
+*Características finales*
+
+- Soporte para int, float y string
+
+- Operadores aritméticos: +, -, *
+
+- Lectura (leer) y escritura (escribir)
+
+- Comentarios con //
+
+- Ejecución desde archivo .miutn
+
+- Manejo de errores léxicos y sintácticos
+
+- Tabla de símbolos interna (memoria básica)
