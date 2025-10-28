@@ -1,4 +1,3 @@
-Si apruebo paradigmas sigo a la sharon vico
 
 ## Lenguaje de programacion miutn
 
