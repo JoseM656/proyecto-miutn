@@ -7,7 +7,7 @@ Los comentarios usan en codigo usan la siguiente estructura /* comentario */
 
 Estructura basica:
 
-´´´
+´´´ASCII
 PROYECTO_FINAL2/
 │
 ├── src/
@@ -24,12 +24,11 @@ PROYECTO_FINAL2/
 │
 └── README.md              → Documentación del proyecto
 
-
 ´´´
 
 ### Estructura de scanner.l:
 
-Archivo que define los *tokens y expresiones regulares del lenguaje*, cosas como
+Archivo que define los **tokens y expresiones regulares del lenguaje**, cosas como
 palabras reservadas pedidas en las consignas, tipos de archivos, 
 operadores aritmetico-logicos y comentarios.
 
@@ -49,7 +48,7 @@ operadores aritmetico-logicos y comentarios.
 /* Código C adicional (opcional) */
 
 ```
-*Importante sobre lexer*
+**Importante sobre lexer**
 
 - ´"." { return PUNTO; }´ obligatorio al finalizar cada setencia.
 
@@ -69,7 +68,7 @@ y la estructura para interpretar el lenguaje.
 
 También gestiona:
 
-- *Declaración de variables*
+- **Declaración de variables**
 
 - Tabla de símbolos
 
@@ -151,7 +150,7 @@ int main(int argc, char *argv[]) {
 
 ```
 
-*Características finales*
+**Características finales**
 
 - Soporte para int, float y string
 
