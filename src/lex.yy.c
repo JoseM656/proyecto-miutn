@@ -911,7 +911,7 @@ case 26:
 YY_RULE_SETUP
 #line 52 "scanner.l"
 { 
-    /* Remover comillas y procesar escapes */
+    
     char *text = yytext;
     int len = strlen(text);
     char *str = (char *)malloc(len - 1);

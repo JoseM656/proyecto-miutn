@@ -1334,7 +1334,7 @@ yyreturnlab:
    ------------------------------- */
 
 void yyerror(const char *s) {
-    fprintf(stderr, "Error sintáctico en línea %d: %s (token: '%s')\n", yylineno, s, yytext);
+    fprintf(stderr, "Error sintactico en línea %d: %s (token: '%s')\n", yylineno, s, yytext);
 }
 
 // int main(int argc, char *argv[]) {

@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    printf("📘 Analizando archivo: %s\n", argv[1]);
+    printf("Analizando archivo: %s\n", argv[1]);
     printf("-----------------------------------\n");
 
     /* Llamar al analizador sintáctico */
@@ -26,9 +26,9 @@ int main(int argc, char *argv[]) {
 
     printf("-----------------------------------\n");
     if (resultado == 0)
-        printf("✅ Análisis completado correctamente.\n");
+        printf("Análisis completado correctamente.\n");
     else
-        printf("❌ Se encontraron errores durante el análisis.\n");
+        printf("Se encontraron errores durante el análisis.\n");
 
     fclose(yyin);
     return 0;

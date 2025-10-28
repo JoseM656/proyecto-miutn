@@ -50,7 +50,7 @@ COMENTARIO "//".*
 {ENTERO}    { yylval.ival = atoi(yytext); return NUM_INT; }
 {DECIMAL}   { yylval.fval = atof(yytext); return NUM_FLOAT; }
 {CADENA}    { 
-    /* Remover comillas y procesar escapes */
+    
     char *text = yytext;
     int len = strlen(text);
     char *str = (char *)malloc(len - 1);
