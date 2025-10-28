@@ -1,6 +1,4 @@
-
 ## Lenguaje de programacion miutn
-
 
 Los comentarios usan la siguiente estructura /* comentario */
 

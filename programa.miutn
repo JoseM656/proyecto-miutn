@@ -21,4 +21,4 @@ utn
     // Repetición simple (si la implementaste)
     repetir 3 veces
         escribir("Iteración").
-    finutn
+finutn
