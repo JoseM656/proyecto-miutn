@@ -37,6 +37,10 @@ Este archivo compone el analizador sintactico, lee los tokens y arma las reglas 
 que el lenguaje va a seguir a la hora de ejecutarse, por ejemplo, que el contenido fuente 
 del archivo .miutn, este entre las palabras claves "UTN" "FINUTN".
 
+Este archivo tambien define una estrcutura para usar variables, tabla de simbolos
+y la estructura para interpretar el lenguaje.
+
+
 ```parser
 
 %{
