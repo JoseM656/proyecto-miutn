@@ -8,8 +8,6 @@ Los comentarios usan en codigo usan la siguiente estructura /* comentario */
 Estructura basica:
 
 ```ASCII
-
-
 PROYECTO_FINAL2/
 │
 ├── src/
