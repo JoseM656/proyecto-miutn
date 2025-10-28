@@ -532,9 +532,9 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    50,    50,    54,    55,    59,    60,    61,    62,    63,
-      64,    65,    66,    70,    71,    72,    73,    74,    75,    76,
-      77
+       0,    51,    51,    55,    56,    60,    61,    62,    63,    64,
+      65,    66,    67,    71,    72,    73,    74,    75,    76,    77,
+      78
 };
 #endif
 
@@ -1326,7 +1326,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 80 "parser.y"
+#line 81 "parser.y"
 
 
 /* -------------------------------
@@ -1337,13 +1337,13 @@ void yyerror(const char *s) {
     fprintf(stderr, "Error sintáctico en línea %d: %s (token: '%s')\n", yylineno, s, yytext);
 }
 
-int main(int argc, char *argv[]) {
-    printf("Iniciando analizador MiUtn...\n");
+// int main(int argc, char *argv[]) {
+//    printf("Iniciando analizador MiUtn...\n");
 
-    if (yyparse() == 0)
-        printf("Análisis completado correctamente.\n");
-    else
-        printf("Se encontraron errores durante el análisis.\n");
+//    if (yyparse() == 0)
+//        printf("Análisis completado correctamente.\n");
+//    else
+//        printf("Se encontraron errores durante el análisis.\n");
 
-    return 0;
-}
+//    return 0;
+//}

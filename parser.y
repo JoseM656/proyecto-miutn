@@ -12,6 +12,7 @@ extern char *yytext;
 void yyerror(const char *s);
 %}
 
+
 /* -------------------------------
    Declaración de tokens (de Flex)
    ------------------------------- */
@@ -87,13 +88,13 @@ void yyerror(const char *s) {
     fprintf(stderr, "Error sintáctico en línea %d: %s (token: '%s')\n", yylineno, s, yytext);
 }
 
-int main(int argc, char *argv[]) {
-    printf("Iniciando analizador MiUtn...\n");
+// int main(int argc, char *argv[]) {
+//    printf("Iniciando analizador MiUtn...\n");
 
-    if (yyparse() == 0)
-        printf("Análisis completado correctamente.\n");
-    else
-        printf("Se encontraron errores durante el análisis.\n");
+//    if (yyparse() == 0)
+//        printf("Análisis completado correctamente.\n");
+//    else
+//        printf("Se encontraron errores durante el análisis.\n");
 
-    return 0;
-}
+//    return 0;
+//}
