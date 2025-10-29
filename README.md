@@ -117,7 +117,48 @@ También gestiona:
 
 ### Control.c
 
-tamo en eso papi
+**Condinales:**
+
+El parser analiza el codigo de una sola pasada, es dificil no ejecutar codigo de un condicional si 
+es negativo por que el analizador ya paso por esa parte, la solucion implementadaes usar
+un sistema de banderas de estado que controlan si las sentencias deben ejecutarse o no.
+
+```c
+int ejecutando_bloque = 1;  // 1 = ejecutar, 0 = saltar
+```
+
+Esta variable global actúa como un interruptor que cada sentencia verifica antes de ejecutarse.
+
+otras funciones imporatntes que ayudan a controlar el flujo:
+
+- `iniciar_si(int condicion)`
+
+Se llama antes de procesar el bloque del condicional
+Evalúa la condición (verdadera/falsa)
+Si es verdadera: ejecutando_bloque = 1 → las sentencias se ejecutan
+Si es falsa: ejecutando_bloque = 0 → las sentencias se saltan
+
+- `debe_ejecutar()`
+
+Función simple que retorna el valor de ejecutando_bloque
+Cada sentencia la llama antes de ejecutarse.
+
+- `finalizar_si()`
+
+Restaura ejecutando_bloque = 1 al salir del condicional
+Asegura que el código después del finsi se ejecute normalmente.
+
+Para implementarlo con parser y bison se usaron funciones intermedias:
+
+```
+condicional:
+    SI condicion ENTONCES {
+        iniciar_si($2);  // ← Acción ANTES del bloque
+    } lista_sentencias FINSI PUNTO {
+        finalizar_si();  // ← Acción DESPUÉS del bloque
+    }
+;
+```
 
 ### MiUtn.c
 

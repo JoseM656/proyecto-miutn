@@ -1,10 +1,16 @@
 #ifndef CONTROL_H
 #define CONTROL_H
 
-/* Manejo de condicionales */
-void ejecutar_si(int condicion);
+/* Estado de ejecución condicional */
+extern int ejecutando_bloque;
 
-/* Manejo de bucles */
-void ejecutar_repetir(int veces, void (*bloque)());
+/* Funciones para condicionales */
+void iniciar_si(int condicion);
+void finalizar_si();
+
+/* Funciones para bucles */
+void iniciar_repetir(int veces);
+void finalizar_repetir();
+int debe_ejecutar();
 
 #endif
