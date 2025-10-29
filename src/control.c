@@ -29,7 +29,7 @@ void iniciar_si(int condicion) {
 void finalizar_si() {
     nivel_anidamiento--;
     ejecutando_bloque = 1;
-    printf("[DEBUG] Fin del bloque SI\n");
+    
 }
 
 int debe_ejecutar() {
