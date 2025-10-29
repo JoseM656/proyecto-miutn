@@ -17,11 +17,15 @@ PROYECTO_FINAL2/
 │   ├── parser.tab.h       → Encabezado generado por Bison (desechable)
 │   ├── lex.yy.c           → Código C generado por Flex (desechable)
 │   ├── MiUtn.c            → Programa principal (ejecuta el parser)
-│   └── miutn.exe          → Ejecutable compilado
+│   │
+│   ├── control.h          → Cabecera del archivo .c, declara las funciones
+│   ├── control.c          → Controla la logica del bulce y el condicional
 │
 ├── programa.miutn         → Programa de prueba principal
 ├── programa_minimo.miutn  → Ejemplo básico del lenguaje
-│
+│ 
+├── miutn.exe              → Ejecutable compilado
+│ 
 └── README.md              → Documentación del proyecto
 ```
 
@@ -111,6 +115,9 @@ También gestiona:
 
 ```
 
+### Control.c
+
+tamo en eso papi
 
 ### MiUtn.c
 
@@ -164,3 +171,5 @@ int main(int argc, char *argv[]) {
 - Manejo de errores léxicos y sintácticos
 
 - Tabla de símbolos interna (memoria básica)
+
+- Bucles y condiconales basicos

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "control.h"   /* <- incluirás este archivo cuando crees control.c */
 
 /* -------------------------------------------
    Declaraciones globales y estructuras base
@@ -45,7 +46,7 @@ Variable *obtener_variable(const char *nombre);
 }
 
 /* Palabras clave */
-%token UTN FINUTN LEER ESCRIBIR REPETIR VECES SI ENTONCES FINSI
+%token UTN FINUTN LEER ESCRIBIR REPETIR VECES FINREPETIR SI ENTONCES FINSI
 %token INT STRING FLOAT
 
 /* Símbolos y operadores */
@@ -59,6 +60,7 @@ Variable *obtener_variable(const char *nombre);
 /* Precedencia */
 %left SUMA RESTA
 %left MULT
+%left IGUAL MAYOR MENOR
 
 /* Tipado de las expresiones */
 %type <fval> expresion
@@ -118,6 +120,16 @@ sentencia:
 
       /* Asignación a variable existente */
     | ID ASIGN expresion PUNTO             { float f = $3; asignar_variable($1, TIPO_FLOAT, &f); free($1); }
+
+      /* Estructura condicional (preparada para control.c) */
+    | SI expresion ENTONCES lista_sentencias FINSI PUNTO {
+          ejecutar_si((int)$2);
+      }
+
+      /* Estructura de repetición (preparada para control.c) */
+    | REPETIR NUM_INT VECES lista_sentencias FINREPETIR PUNTO {
+          ejecutar_repetir($2, NULL);
+      }
 ;
 
 /* -------------------------------------------
@@ -128,6 +140,9 @@ expresion:
       expresion SUMA expresion   { $$ = $1 + $3; }
     | expresion RESTA expresion  { $$ = $1 - $3; }
     | expresion MULT expresion   { $$ = $1 * $3; }
+    | expresion MENOR expresion  { $$ = ($1 < $3); }
+    | expresion MAYOR expresion  { $$ = ($1 > $3); }
+    | expresion IGUAL expresion  { $$ = ($1 == $3); }
     | PARI expresion PARD        { $$ = $2; }
     | NUM_INT                    { $$ = (float)$1; }
     | NUM_FLOAT                  { $$ = $1; }
