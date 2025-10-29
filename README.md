@@ -117,10 +117,10 @@ También gestiona:
 
 ### Control.c
 
-**Condinales:**
+**Condicionales:**
 
 El parser analiza el codigo de una sola pasada, es dificil no ejecutar codigo de un condicional si 
-es negativo por que el analizador ya paso por esa parte, la solucion implementadaes usar
+es negativo por que el analizador ya paso por esa parte, la solucion implementada es usar
 un sistema de banderas de estado que controlan si las sentencias deben ejecutarse o no.
 
 ```c
@@ -159,6 +159,10 @@ condicional:
     }
 ;
 ```
+
+**Bucles:**
+
+
 
 ### MiUtn.c
 
