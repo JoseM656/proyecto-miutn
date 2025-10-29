@@ -23,6 +23,7 @@ COMENTARIO "//".*
 "leer"      { return LEER; }
 "escribir"  { return ESCRIBIR; }
 "repetir"   { return REPETIR; }
+"finrepetir"   { return REPETIR; }
 "veces"     { return VECES; }
 "si"        { return SI; }
 "entonces"  { return ENTONCES; }
