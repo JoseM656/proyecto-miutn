@@ -1,24 +1,11 @@
-// Programa completo de prueba para MiUtn
-
 utn
-    // ========== PRUEBAS DE CONDICIONALES ==========
-    escribir("=== PRUEBA DE CONDICIONALES ===").
+    int edad := 18.
     
-    int a := 5.
-    int b := 10.
-    
-    escribir("a = 5, b = 10").
-    
-    si a < b entonces
-        escribir("a es menor que b (CORRECTO)").
+    si edad > 17 entonces
+        escribir("Mayor de edad").
     finsi.
     
-    si b < a entonces
-        escribir("b es menor que a (NO DEBERIA APARECER)").
+    si edad < 13 entonces
+        escribir("Menor de edad").
     finsi.
-    
-    si a = 5 entonces
-        escribir("a es igual a 5 (CORRECTO)").
-    finsi.
-    
 finutn

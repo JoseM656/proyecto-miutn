@@ -814,7 +814,7 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 26 "scanner.l"
-{ return REPETIR; }
+{ return FINREPETIR; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
@@ -920,7 +920,6 @@ case 27:
 YY_RULE_SETUP
 #line 53 "scanner.l"
 { 
-    
     char *text = yytext;
     int len = strlen(text);
     char *str = (char *)malloc(len - 1);
@@ -932,31 +931,31 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 63 "scanner.l"
+#line 62 "scanner.l"
 { yylval.sval = strdup(yytext); return ID; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 65 "scanner.l"
-{ /* ignorar */ }
+{ /* ignorar comentarios */ }
 	YY_BREAK
 case 30:
 /* rule 30 can match eol */
 YY_RULE_SETUP
 #line 66 "scanner.l"
-{ /* ignorar */ }
+{ /* ignorar espacios en blanco */ }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 68 "scanner.l"
+#line 69 "scanner.l"
 { printf("Error lexico: simbolo '%s' no reconocido\n", yytext); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 70 "scanner.l"
+#line 71 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 959 "lex.yy.c"
+#line 958 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1961,7 +1960,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 70 "scanner.l"
+#line 71 "scanner.l"
 
 
 int yywrap() {

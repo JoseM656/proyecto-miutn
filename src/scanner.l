@@ -18,40 +18,39 @@ COMENTARIO "//".*
 %%
 
 
-"utn"       { return UTN; }
-"finutn"    { return FINUTN; }
-"leer"      { return LEER; }
-"escribir"  { return ESCRIBIR; }
-"repetir"   { return REPETIR; }
-"finrepetir"   { return REPETIR; }
-"veces"     { return VECES; }
-"si"        { return SI; }
-"entonces"  { return ENTONCES; }
-"finsi"     { return FINSI; }
+"utn"          { return UTN; }
+"finutn"       { return FINUTN; }
+"leer"         { return LEER; }
+"escribir"     { return ESCRIBIR; }
+"repetir"      { return REPETIR; }
+"finrepetir"   { return FINREPETIR; }
+"veces"        { return VECES; }
+"si"           { return SI; }
+"entonces"     { return ENTONCES; }
+"finsi"        { return FINSI; }
 
 
-"int"       { return INT; }
-"string"    { return STRING; }
-"float"     { return FLOAT; }
+"int"          { return INT; }
+"string"       { return STRING; }
+"float"        { return FLOAT; }
 
 
-":="        { return ASIGN; }
-">"         { return MAYOR; }
-"<"         { return MENOR; }
-"="         { return IGUAL; }
-"+"         { return SUMA; }
-"-"         { return RESTA; }
-"*"         { return MULT; }
-"("         { return PARI; }
-")"         { return PARD; }
-","         { return COMA; }
-"."         { return PUNTO; }
+":="           { return ASIGN; }
+">"            { return MAYOR; }
+"<"            { return MENOR; }
+"="            { return IGUAL; }
+"+"            { return SUMA; }
+"-"            { return RESTA; }
+"*"            { return MULT; }
+"("            { return PARI; }
+")"            { return PARD; }
+","            { return COMA; }
+"."            { return PUNTO; }
 
 
-{ENTERO}    { yylval.ival = atoi(yytext); return NUM_INT; }
-{DECIMAL}   { yylval.fval = atof(yytext); return NUM_FLOAT; }
-{CADENA}    { 
-    
+{ENTERO}       { yylval.ival = atoi(yytext); return NUM_INT; }
+{DECIMAL}      { yylval.fval = atof(yytext); return NUM_FLOAT; }
+{CADENA}       { 
     char *text = yytext;
     int len = strlen(text);
     char *str = (char *)malloc(len - 1);
@@ -60,12 +59,14 @@ COMENTARIO "//".*
     yylval.sval = str;
     return CADENA_TXT; 
 }
-{IDENT}     { yylval.sval = strdup(yytext); return ID; }
+{IDENT}        { yylval.sval = strdup(yytext); return ID; }
 
-{COMENTARIO}  { /* ignorar */ }
-{ESPACIOS}    { /* ignorar */ }
 
-.           { printf("Error lexico: simbolo '%s' no reconocido\n", yytext); }
+{COMENTARIO}   { /* ignorar comentarios */ }
+{ESPACIOS}     { /* ignorar espacios en blanco */ }
+
+
+.              { printf("Error lexico: simbolo '%s' no reconocido\n", yytext); }
 
 %%
 

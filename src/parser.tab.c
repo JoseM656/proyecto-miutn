@@ -555,9 +555,9 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    56,    56,    60,    61,    65,    70,    76,    90,   106,
-     113,   120,   127,   134,   135,   141,   141,   149,   150,   151,
-     152,   158,   158,   168,   169,   170,   171,   172,   173,   174
+       0,    56,    56,    60,    61,    66,    79,    93,   115,   133,
+     149,   165,   182,   197,   198,   204,   204,   212,   213,   214,
+     215,   221,   221,   231,   232,   233,   234,   235,   236,   237
 };
 #endif
 
@@ -1166,30 +1166,48 @@ yyreduce:
   switch (yyn)
     {
   case 5: /* sentencia: ESCRIBIR PARI expresion PARD PUNTO  */
-#line 65 "parser.y"
+#line 66 "parser.y"
                                          {
-          if (debe_ejecutar()) {
+          if (en_bucle) {
+              /* Guardar comando para ejecutar después */
+              Comando cmd;
+              cmd.tipo = CMD_ESCRIBIR_NUMERO;
+              cmd.datos.escribir_num.valor = (yyvsp[-2].fval);
+              guardar_comando(cmd);
+          } else if (debe_ejecutar()) {
               printf("%g\n", (yyvsp[-2].fval));
           }
       }
-#line 1176 "parser.tab.c"
+#line 1182 "parser.tab.c"
     break;
 
   case 6: /* sentencia: ESCRIBIR PARI CADENA_TXT PARD PUNTO  */
-#line 70 "parser.y"
+#line 79 "parser.y"
                                           {
-          if (debe_ejecutar()) {
+          if (en_bucle) {
+              Comando cmd;
+              cmd.tipo = CMD_ESCRIBIR_STRING;
+              strncpy(cmd.datos.escribir_str.texto, (yyvsp[-2].sval), 199);
+              cmd.datos.escribir_str.texto[199] = '\0';
+              guardar_comando(cmd);
+          } else if (debe_ejecutar()) {
               printf("%s\n", (yyvsp[-2].sval));
           }
           free((yyvsp[-2].sval));
       }
-#line 1187 "parser.tab.c"
+#line 1199 "parser.tab.c"
     break;
 
   case 7: /* sentencia: ESCRIBIR PARI ID PARD PUNTO  */
-#line 76 "parser.y"
+#line 93 "parser.y"
                                   {
-          if (debe_ejecutar()) {
+          if (en_bucle) {
+              Comando cmd;
+              cmd.tipo = CMD_ESCRIBIR_VARIABLE;
+              strncpy(cmd.datos.escribir_var.nombre, (yyvsp[-2].sval), 49);
+              cmd.datos.escribir_var.nombre[49] = '\0';
+              guardar_comando(cmd);
+          } else if (debe_ejecutar()) {
               Variable *v = obtener_variable((yyvsp[-2].sval));
               if (!v)
                   printf("Advertencia: variable '%s' no definida\n", (yyvsp[-2].sval));
@@ -1202,13 +1220,13 @@ yyreduce:
           }
           free((yyvsp[-2].sval));
       }
-#line 1206 "parser.tab.c"
+#line 1224 "parser.tab.c"
     break;
 
   case 8: /* sentencia: LEER PARI ID PARD PUNTO  */
-#line 90 "parser.y"
+#line 115 "parser.y"
                               {
-          if (debe_ejecutar()) {
+          if (debe_ejecutar() && !en_bucle) {
               char buffer[64];
               printf("Ingrese valor para %s: ", (yyvsp[-2].sval));
               scanf("%63s", buffer);
@@ -1223,151 +1241,180 @@ yyreduce:
           }
           free((yyvsp[-2].sval));
       }
-#line 1227 "parser.tab.c"
+#line 1245 "parser.tab.c"
     break;
 
   case 9: /* sentencia: INT ID ASIGN expresion PUNTO  */
-#line 106 "parser.y"
+#line 133 "parser.y"
                                    {
-          if (debe_ejecutar()) {
+          if (en_bucle) {
+              Comando cmd;
+              cmd.tipo = CMD_ASIGNAR_INT;
+              strncpy(cmd.datos.asignar_int.nombre, (yyvsp[-3].sval), 49);
+              cmd.datos.asignar_int.nombre[49] = '\0';
+              cmd.datos.asignar_int.valor = (int)(yyvsp[-1].fval);
+              guardar_comando(cmd);
+          } else if (debe_ejecutar()) {
               int v = (int)(yyvsp[-1].fval);
               asignar_variable((yyvsp[-3].sval), TIPO_INT, &v);
           }
           free((yyvsp[-3].sval));
       }
-#line 1239 "parser.tab.c"
+#line 1264 "parser.tab.c"
     break;
 
   case 10: /* sentencia: FLOAT ID ASIGN expresion PUNTO  */
-#line 113 "parser.y"
+#line 149 "parser.y"
                                      {
-          if (debe_ejecutar()) {
+          if (en_bucle) {
+              Comando cmd;
+              cmd.tipo = CMD_ASIGNAR_FLOAT;
+              strncpy(cmd.datos.asignar_float.nombre, (yyvsp[-3].sval), 49);
+              cmd.datos.asignar_float.nombre[49] = '\0';
+              cmd.datos.asignar_float.valor = (yyvsp[-1].fval);
+              guardar_comando(cmd);
+          } else if (debe_ejecutar()) {
               float f = (yyvsp[-1].fval);
               asignar_variable((yyvsp[-3].sval), TIPO_FLOAT, &f);
           }
           free((yyvsp[-3].sval));
       }
-#line 1251 "parser.tab.c"
+#line 1283 "parser.tab.c"
     break;
 
   case 11: /* sentencia: STRING ID ASIGN CADENA_TXT PUNTO  */
-#line 120 "parser.y"
+#line 165 "parser.y"
                                        {
-          if (debe_ejecutar()) {
+          if (en_bucle) {
+              Comando cmd;
+              cmd.tipo = CMD_ASIGNAR_STRING;
+              strncpy(cmd.datos.asignar_string.nombre, (yyvsp[-3].sval), 49);
+              cmd.datos.asignar_string.nombre[49] = '\0';
+              strncpy(cmd.datos.asignar_string.valor, (yyvsp[-1].sval), 99);
+              cmd.datos.asignar_string.valor[99] = '\0';
+              guardar_comando(cmd);
+          } else if (debe_ejecutar()) {
               asignar_variable((yyvsp[-3].sval), TIPO_STRING, (yyvsp[-1].sval));
           }
           free((yyvsp[-3].sval));
           free((yyvsp[-1].sval));
       }
-#line 1263 "parser.tab.c"
+#line 1303 "parser.tab.c"
     break;
 
   case 12: /* sentencia: ID ASIGN expresion PUNTO  */
-#line 127 "parser.y"
+#line 182 "parser.y"
                                {
-          if (debe_ejecutar()) {
+          if (en_bucle) {
+              Comando cmd;
+              cmd.tipo = CMD_ASIGNAR_EXPR;
+              strncpy(cmd.datos.asignar_expr.nombre, (yyvsp[-3].sval), 49);
+              cmd.datos.asignar_expr.nombre[49] = '\0';
+              cmd.datos.asignar_expr.valor = (yyvsp[-1].fval);
+              guardar_comando(cmd);
+          } else if (debe_ejecutar()) {
               float f = (yyvsp[-1].fval);
               asignar_variable((yyvsp[-3].sval), TIPO_FLOAT, &f);
           }
           free((yyvsp[-3].sval));
       }
-#line 1275 "parser.tab.c"
+#line 1322 "parser.tab.c"
     break;
 
   case 15: /* $@1: %empty  */
-#line 141 "parser.y"
+#line 204 "parser.y"
                           {
         iniciar_si((yyvsp[-1].ival));
     }
-#line 1283 "parser.tab.c"
+#line 1330 "parser.tab.c"
     break;
 
   case 16: /* condicional: SI condicion ENTONCES $@1 lista_sentencias FINSI PUNTO  */
-#line 143 "parser.y"
+#line 206 "parser.y"
                                    {
         finalizar_si();
     }
-#line 1291 "parser.tab.c"
+#line 1338 "parser.tab.c"
     break;
 
   case 17: /* condicion: expresion MENOR expresion  */
-#line 149 "parser.y"
+#line 212 "parser.y"
                                  { (yyval.ival) = ((yyvsp[-2].fval) < (yyvsp[0].fval)); }
-#line 1297 "parser.tab.c"
+#line 1344 "parser.tab.c"
     break;
 
   case 18: /* condicion: expresion MAYOR expresion  */
-#line 150 "parser.y"
+#line 213 "parser.y"
                                  { (yyval.ival) = ((yyvsp[-2].fval) > (yyvsp[0].fval)); }
-#line 1303 "parser.tab.c"
+#line 1350 "parser.tab.c"
     break;
 
   case 19: /* condicion: expresion IGUAL expresion  */
-#line 151 "parser.y"
+#line 214 "parser.y"
                                  { (yyval.ival) = ((yyvsp[-2].fval) == (yyvsp[0].fval)); }
-#line 1309 "parser.tab.c"
+#line 1356 "parser.tab.c"
     break;
 
   case 20: /* condicion: expresion  */
-#line 152 "parser.y"
+#line 215 "parser.y"
                                  { (yyval.ival) = ((yyvsp[0].fval) != 0); }
-#line 1315 "parser.tab.c"
+#line 1362 "parser.tab.c"
     break;
 
   case 21: /* $@2: %empty  */
-#line 158 "parser.y"
+#line 221 "parser.y"
                           {
         iniciar_repetir((yyvsp[-1].ival));
     }
-#line 1323 "parser.tab.c"
+#line 1370 "parser.tab.c"
     break;
 
   case 22: /* bucle: REPETIR NUM_INT VECES $@2 lista_sentencias FINREPETIR PUNTO  */
-#line 160 "parser.y"
+#line 223 "parser.y"
                                         {
         finalizar_repetir();
     }
-#line 1331 "parser.tab.c"
+#line 1378 "parser.tab.c"
     break;
 
   case 23: /* expresion: expresion SUMA expresion  */
-#line 168 "parser.y"
+#line 231 "parser.y"
                                  { (yyval.fval) = (yyvsp[-2].fval) + (yyvsp[0].fval); }
-#line 1337 "parser.tab.c"
+#line 1384 "parser.tab.c"
     break;
 
   case 24: /* expresion: expresion RESTA expresion  */
-#line 169 "parser.y"
+#line 232 "parser.y"
                                  { (yyval.fval) = (yyvsp[-2].fval) - (yyvsp[0].fval); }
-#line 1343 "parser.tab.c"
+#line 1390 "parser.tab.c"
     break;
 
   case 25: /* expresion: expresion MULT expresion  */
-#line 170 "parser.y"
+#line 233 "parser.y"
                                  { (yyval.fval) = (yyvsp[-2].fval) * (yyvsp[0].fval); }
-#line 1349 "parser.tab.c"
+#line 1396 "parser.tab.c"
     break;
 
   case 26: /* expresion: PARI expresion PARD  */
-#line 171 "parser.y"
+#line 234 "parser.y"
                                  { (yyval.fval) = (yyvsp[-1].fval); }
-#line 1355 "parser.tab.c"
+#line 1402 "parser.tab.c"
     break;
 
   case 27: /* expresion: NUM_INT  */
-#line 172 "parser.y"
+#line 235 "parser.y"
                                  { (yyval.fval) = (float)(yyvsp[0].ival); }
-#line 1361 "parser.tab.c"
+#line 1408 "parser.tab.c"
     break;
 
   case 28: /* expresion: NUM_FLOAT  */
-#line 173 "parser.y"
+#line 236 "parser.y"
                                  { (yyval.fval) = (yyvsp[0].fval); }
-#line 1367 "parser.tab.c"
+#line 1414 "parser.tab.c"
     break;
 
   case 29: /* expresion: ID  */
-#line 174 "parser.y"
+#line 237 "parser.y"
          {
             Variable *v = obtener_variable((yyvsp[0].sval));
             if (!v) {
@@ -1381,11 +1428,11 @@ yyreduce:
                 (yyval.fval) = 0.0;
             free((yyvsp[0].sval));
          }
-#line 1385 "parser.tab.c"
+#line 1432 "parser.tab.c"
     break;
 
 
-#line 1389 "parser.tab.c"
+#line 1436 "parser.tab.c"
 
       default: break;
     }
@@ -1578,7 +1625,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 189 "parser.y"
+#line 252 "parser.y"
 
 
 void yyerror(const char *s) {

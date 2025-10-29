@@ -1,0 +1,12 @@
+utn
+    int contador := 1.
+    
+    repetir 5 veces
+        escribir("Iteracion:").
+        escribir(contador).
+        contador := contador + 1.
+    finrepetir.
+    
+    escribir("Contador final:").
+    escribir(contador).
+finutn

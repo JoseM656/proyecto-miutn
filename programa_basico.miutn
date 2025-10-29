@@ -1,0 +1,8 @@
+utn
+    int x := 10.
+    float y := 3.5.
+    string mensaje := "Resultado:".
+    
+    escribir(mensaje).
+    escribir(x + y).
+finutn

@@ -62,19 +62,42 @@ lista_sentencias:
 ;
 
 sentencia:
+      /* ESCRIBIR NÚMERO */
       ESCRIBIR PARI expresion PARD PUNTO {
-          if (debe_ejecutar()) {
+          if (en_bucle) {
+              /* Guardar comando para ejecutar después */
+              Comando cmd;
+              cmd.tipo = CMD_ESCRIBIR_NUMERO;
+              cmd.datos.escribir_num.valor = $3;
+              guardar_comando(cmd);
+          } else if (debe_ejecutar()) {
               printf("%g\n", $3);
           }
       }
+      
+      /* ESCRIBIR STRING */
     | ESCRIBIR PARI CADENA_TXT PARD PUNTO {
-          if (debe_ejecutar()) {
+          if (en_bucle) {
+              Comando cmd;
+              cmd.tipo = CMD_ESCRIBIR_STRING;
+              strncpy(cmd.datos.escribir_str.texto, $3, 199);
+              cmd.datos.escribir_str.texto[199] = '\0';
+              guardar_comando(cmd);
+          } else if (debe_ejecutar()) {
               printf("%s\n", $3);
           }
           free($3);
       }
+      
+      /* ESCRIBIR VARIABLE */
     | ESCRIBIR PARI ID PARD PUNTO {
-          if (debe_ejecutar()) {
+          if (en_bucle) {
+              Comando cmd;
+              cmd.tipo = CMD_ESCRIBIR_VARIABLE;
+              strncpy(cmd.datos.escribir_var.nombre, $3, 49);
+              cmd.datos.escribir_var.nombre[49] = '\0';
+              guardar_comando(cmd);
+          } else if (debe_ejecutar()) {
               Variable *v = obtener_variable($3);
               if (!v)
                   printf("Advertencia: variable '%s' no definida\n", $3);
@@ -87,8 +110,10 @@ sentencia:
           }
           free($3);
       }
+      
+      /* LEER */
     | LEER PARI ID PARD PUNTO {
-          if (debe_ejecutar()) {
+          if (debe_ejecutar() && !en_bucle) {
               char buffer[64];
               printf("Ingrese valor para %s: ", $3);
               scanf("%63s", buffer);
@@ -103,34 +128,72 @@ sentencia:
           }
           free($3);
       }
+      
+      /* DECLARACIÓN INT */
     | INT ID ASIGN expresion PUNTO {
-          if (debe_ejecutar()) {
+          if (en_bucle) {
+              Comando cmd;
+              cmd.tipo = CMD_ASIGNAR_INT;
+              strncpy(cmd.datos.asignar_int.nombre, $2, 49);
+              cmd.datos.asignar_int.nombre[49] = '\0';
+              cmd.datos.asignar_int.valor = (int)$4;
+              guardar_comando(cmd);
+          } else if (debe_ejecutar()) {
               int v = (int)$4;
               asignar_variable($2, TIPO_INT, &v);
           }
           free($2);
       }
+      
+      /* DECLARACIÓN FLOAT */
     | FLOAT ID ASIGN expresion PUNTO {
-          if (debe_ejecutar()) {
+          if (en_bucle) {
+              Comando cmd;
+              cmd.tipo = CMD_ASIGNAR_FLOAT;
+              strncpy(cmd.datos.asignar_float.nombre, $2, 49);
+              cmd.datos.asignar_float.nombre[49] = '\0';
+              cmd.datos.asignar_float.valor = $4;
+              guardar_comando(cmd);
+          } else if (debe_ejecutar()) {
               float f = $4;
               asignar_variable($2, TIPO_FLOAT, &f);
           }
           free($2);
       }
+      
+      /* DECLARACIÓN STRING */
     | STRING ID ASIGN CADENA_TXT PUNTO {
-          if (debe_ejecutar()) {
+          if (en_bucle) {
+              Comando cmd;
+              cmd.tipo = CMD_ASIGNAR_STRING;
+              strncpy(cmd.datos.asignar_string.nombre, $2, 49);
+              cmd.datos.asignar_string.nombre[49] = '\0';
+              strncpy(cmd.datos.asignar_string.valor, $4, 99);
+              cmd.datos.asignar_string.valor[99] = '\0';
+              guardar_comando(cmd);
+          } else if (debe_ejecutar()) {
               asignar_variable($2, TIPO_STRING, $4);
           }
           free($2);
           free($4);
       }
+      
+      /* ASIGNACIÓN A VARIABLE EXISTENTE */
     | ID ASIGN expresion PUNTO {
-          if (debe_ejecutar()) {
+          if (en_bucle) {
+              Comando cmd;
+              cmd.tipo = CMD_ASIGNAR_EXPR;
+              strncpy(cmd.datos.asignar_expr.nombre, $1, 49);
+              cmd.datos.asignar_expr.nombre[49] = '\0';
+              cmd.datos.asignar_expr.valor = $3;
+              guardar_comando(cmd);
+          } else if (debe_ejecutar()) {
               float f = $3;
               asignar_variable($1, TIPO_FLOAT, &f);
           }
           free($1);
       }
+      
     | condicional
     | bucle
 ;

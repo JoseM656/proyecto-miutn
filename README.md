@@ -5,6 +5,12 @@ operar con expresiones aritméticas y trabajar con cadenas de texto.
 
 Los comentarios usan en codigo usan la siguiente estructura /* comentario */
 
+**Para ejecutar un archivo, por terminal:**
+
+`.\miutn.exe NOMBRE_ARCHIVO.miutn`
+
+tiene que estar en el mismo directorio que el ejecutable.
+
 Estructura basica:
 
 ```ASCII
@@ -162,7 +168,55 @@ condicional:
 
 **Bucles:**
 
+Bison procesa el código en una sola pasada. Cuando llega a `finrepetir`, 
+ya leyó y ejecutó todo el bloque. No puede "rebobinar" para ejecutarlo otra vez.
+En lugar de ejecutar inmediatamente, se guarda las instrucciones y se re-ejecutan N veces.
 
+```
+typedef enum {
+    CMD_ESCRIBIR_NUMERO,
+    CMD_ESCRIBIR_STRING,
+    CMD_ASIGNAR_INT,
+    // ... otros tipos
+} TipoComando;
+
+typedef struct {
+    TipoComando tipo;
+    union {
+        struct { float valor; } escribir_num;
+        struct { char texto[200]; } escribir_str;
+        // ... otros datos
+    } datos;
+} Comando;
+
+Comando buffer_comandos[100];
+int num_comandos = 0;
+int en_bucle = 0;
+```
+
+El código, entonces, tiene dos modos, modo normal `(en_bucle = 0)` y modo bucle
+`(en_bucle = 1)` la diferencia radica en que en modo bucle deja de ejecutar y guarda en un buffer.
+
+otras funciones que componen el bucle:
+
+- `iniciar_repetir(int veces)`
+
+Activa el modo bucle: en_bucle = 1
+Limpia el buffer de comandos
+Guarda el número de iteraciones
+
+- `guardar_comando(Comando cmd)`
+
+Almacena el comando en el buffer en lugar de ejecutarlo
+
+- `finalizar_repetir()`
+
+Ejecuta todos los comandos guardados N veces
+Limpia el buffer y desactiva el modo bucle
+
+- `ejecutar_comandos_guardados()`
+
+Recorre el buffer y ejecuta cada comando según su tipo
 
 ### MiUtn.c
 
