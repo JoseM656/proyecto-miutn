@@ -1,0 +1,11 @@
+utn
+    float x := 3.5.
+    
+    string mensaje := "Ingrese un numero:".
+    escribir(mensaje).
+    
+    // la funcion leer ya define la variable numero
+    leer(numero).              
+    
+    escribir(numero + x).
+finutn
